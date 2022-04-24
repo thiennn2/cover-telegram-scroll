@@ -32,11 +32,12 @@ function App() {
   useEffect(() => {
     const scroll = scrollRef.current;
     if (!scroll) return;
+    console.log("scroll.addEventListener");
     scroll.addEventListener('scroll', () => {
       const { scrollTop, scrollHeight, clientHeight } = scroll;
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
-      const isNearTop = scrollTop < 100 && scrollTop !== 0;
-      if (isNearTop) {
+      const isNearTop = scrollTop < 100 && scrollTop > 1;
+      if (isNearTop && page !== 1) {
         const pages = getRenderPages(page);
         const nextPage = pages[0];
         if (nextPage < 1) return;
@@ -50,16 +51,18 @@ function App() {
         console.log("pages--prevPage--", pages, prevPage);
         return setPage(prevPage);
       }
-      if (scrollTop === 0) {
+      if (scrollTop === 0 && page > 1) {
+        // don't now why but it's not working
+        console.log(`scrollTop(${scrollTop}) === 0 && page(${page}) > 1`);
         scroll.scrollTop = 100;
       }
-    }
-    , { passive: true });
+    });
     return () => {
+      console.log("scroll.removeEventListener");
       scroll.removeEventListener('scroll', () => {
       });
     }
-  }, [page, scrollRef])
+  }, [page])
 
   useEffect(() => {
     if (page > 1 && page < 20) {
